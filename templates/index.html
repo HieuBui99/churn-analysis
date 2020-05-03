@@ -1,0 +1,203 @@
+{% extends "dashboard.html" %}
+{% block javascript %}
+	<script type="text/javascript">
+		var count = {{ churn_count| safe }};
+		var callCount =  {{ call_count|safe }};
+		var intlCount =  {{ intl_count|safe }};
+
+	</script>
+	<script type="text/javascript" src="{{url_for('static', filename='js/table.js')}}"></script>  
+	<script type="text/javascript" src="{{url_for('static', filename='js/dashboard.js')}}"></script> 
+	<script type="text/javascript" src="{{url_for('static', filename='js/dashboard_chart.js')}}"></script> 
+{% endblock %}
+
+{% block body %}
+		{% with messages = get_flashed_messages() %}
+				{% if messages %}
+					{% for message in messages %}
+						<div class="alert alert-success mt-2 alert-auto" role="alert">
+							{{ message }}
+						</div>
+					{% endfor %}	
+				{% endif %}
+		{% endwith %}
+
+		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+			<h1 class="h2 text-gray-800">Dashboard</h1>
+			<div class="btn-toolbar mb-2 mb-md-0">
+				<div class="btn-group mr-2">
+					<button type="button" class="btn btn-lg btn-outline-primary" data-toggle="modal" data-target="#uploadModal">Upload file</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-xl-3 col-md-6 mb-4">
+					<div class="card border-left-primary shadow">
+						<div class="card-body">
+							<div class="row no-gutters align-items-center">
+								<div class="col">
+									<div class="font-weight-bold mb-1 text-xs text-uppercase text-prime">No. of potential churners</div>
+									<div class="h5 font-weight-bold text-gray" id="n-churn"></div>
+								</div>
+								<div class="col-auto">
+									<i class="fas fa-2x fa-user text-gray-300 "></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xl-4 col-lg-6 pb-3">
+                    <div class="card shadow">
+                        <h6 class="m-0 card-header text-prime font-weight-bold">Potential churn rates</h5>
+                        <div class="card-body">
+                            <div class="pie-chart-container py-3">
+                                <canvas id="churn-rate-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div class="col-xl-8">
+					<div class="card shadow mb-4">
+						<h6 class="m-0 font-weight-bold card-header text-prime">Customer count by international plan and churn</h5>
+						<div class="card-body">
+							<div class="bar-container">
+								<canvas id="intl-count-chart"></canvas>
+							</div>
+						</div>
+					</div>                  
+				</div>
+				
+			</div>
+			<div class="row border-bottom">
+				<div class="col-xl-10">
+					<div class="card shadow mb-3">
+						<h6 class="m-0 font-weight-bold card-header text-prime">Customer count by customer service call and churn</h5>
+						<div class="card-body">
+							<div class="bar-container">
+								<canvas id="call-count-chart"></canvas>
+							</div>
+						</div>
+					</div>                  
+				</div>
+			</div>
+
+		</div>
+		<h2 class="mt-4 text-gray-800" style="float:left;">Customer information</h2>
+		<div class="mt-4" style="float:right;">
+			<div class="input-group">
+				<div class="btn-group">
+					<button type="submit" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal" id="delete">Delete</button>
+				</div>
+				<div class="btn-group">
+					<button class="btn btn-outline-danger btn-sm ml-1 mr-5" data-toggle="modal" data-target="#deleteAllModal" id="deleteAll">Delete All</button>
+				</div>
+				<input class="form-control" id="searchBox" type="text" placeholder="Search by ID">
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table id="infoTable" class="shadow table table-hover ">
+				<thead class="thead-dark">
+				<tr>
+					<th></th>
+					<th>#</th>
+					<th>State</th>
+					<th>Phone Number</th>
+					<th>Churn Probability</th>
+					<th>Status</th>
+				</tr>
+				</thead>
+				<tbody>
+					{% for row in data %}
+						<tr>
+							<td class="checkBoxCol"><input type="checkbox" class="checkCol" name="box" value="{{row.id}}" form="deleteForm" id="{{row.id}}"></td>
+							<td><a href="{{ url_for('customer', id=row.id)}}">{{ row.id }}</a></td>
+							<td>{{ row.state_name }}</td>
+							<td>{{ row.phone_number }}</td>
+							<td>{{ row.churn_pct }}</td>
+							{% if row.status == 'TRUE' %}
+								<td>Potential churner</td>
+							{% else %}
+								<td>No risk of churn</td>
+							{% endif %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+
+	<!-- Delete Modal -->
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteModalLabel">Confirm deletion</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Remove selected entries from the database?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<form action={{url_for('delete_entries')}} method="POST" id="deleteForm">
+					<input type="submit" class="btn btn-danger" value="Delete">
+				</form>
+			</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Delete all modal -->
+	<div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-labelledby="deleteAllModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteAllModalLabel">Confirm deletion</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Remove eveything from the database?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<form action={{url_for('delete_entries')}} method="POST" id="deleteAllForm">
+					<input type="submit" class="btn btn-danger" name="deleteAll" value="Delete">
+				</form>
+			</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- File upload modal -->
+	<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="uploadModalLabel">Upload customer information.</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body d-flex justify-content-center">
+				<input type="file" class="form-control" name="dataFile" id="dataFile" form="uploadForm">				
+				<label for="dataFile" class="pl-3 pr-3 pb-1"><i class="fas fa-upload"></i><span class="ml-1">Select a CSV or Excel file</span></label>
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<form action={{url_for('upload')}} enctype="multipart/form-data" method="POST" id="uploadForm">
+					<input type="submit" class="btn btn-primary" value="Upload">
+				</form>
+			</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

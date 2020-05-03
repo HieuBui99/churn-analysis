@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/static/css/dashboard.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"/>
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+        
+        {% block javascript %}
+
+        {% endblock %}
+
+
+        <title>BK Analytics</title>
+    </head>
+    <body>          
+        <nav class="navbar navbar-dark bg-white flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0 text-center" href="{{ url_for('index') }}">
+                <i class="mt-2 fas fa-laugh-wink"></i>
+                <span class="ml-2">BK Analytics</span>
+            </a>
+            <ul class="navbar-nav px-3">
+              <li class="nav-item text-nowrap">
+                <a class="nav-link text-prime" href="{{ url_for('logout') }}">Sign out</a>
+              </li>
+            </ul>
+        </nav>
+        <div class="container-fluid" >       
+            <div class="row">
+                <nav class="col-md-2 d-none d-md-block bg-gradient-primary sidebar">
+                    <div class="sidebar-sticky">
+                        <div >
+                            <img class="img-profile rounded-circle ml-2 mr-2" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBAODhANEBASDRENEA8NDQ8QEA4SIB0iIiAdHx8aIDQsJCYxJx8fLTItMT0uOjAwIys9TT9ANzQ5MDUBCgoKDQ0NFRAQFS0lHSUtLS0tLS0uKywuLS0tLS4tListLC0tLTctNy03LS4tLS03LjcrLTc3Nys3LSs3NzcrK//AABEIAJYAZAMBEQACEQEDEQH/xAAcAAABBQEBAQAAAAAAAAAAAAAFAAECBAYDBwj/xAA2EAACAQMCAgkCAwgDAAAAAAABAgADBBESIQUxBiJBUVJhcYGhE5FiwdEHFCMyQ7Hh8EJTcv/EABsBAAIDAQEBAAAAAAAAAAAAAAABAgMEBQYH/8QAJhEBAAICAgICAgIDAQAAAAAAAAECAxEEMQUhEkEiYRNRMlLwI//aAAwDAQACEQMRAD8AyWJ6x5MsRg2IGaAOBAFAFiGgfECIQB4yPAHgRQBjImjGZGANiBlAFmAIRkWYjPGR4EQgDwB4EiZFI0YNAzEwDnWrKoyxAEhe9axuZWUx2vOqwGV+MgfyLnzJxMGTyFY9Vjbo4/G2mPynTkvG27VX2JlUeSt/qsnxlfqy5bcURtj1T58ppxc7Hf1Pply8DJT3HuF9TNu2GYSzGR4yOIEmFgW3MyKRoGRgFPiN6KQ7yeQmfkciMNd/bXxeNOa2vpn7m4Zzlj+gnDy5r5J3aXdxYaYq6rDhKlxYiCSDcQDQcOYLlWfsyFO+PKdDh8q1Z+NunN5vFi0fKvYkBO04SQEZbTRYIzLpiCCsYl0GgZGAZvirZqt5bTg820zmnb0XBrEYa6U1UnYAk9wzMcy2xEz0nStnY6VRie4KZGbRHaUY7T1AvZ9FbqpvoKD8UqtnrC6vGvPbnxHo7cUBqZcjtKx1zVn0V+PasbchVbQrrsybE9pl9baZrV32N8PrfURW9j6z0PHzRkpEvM8vDOLJMfS1iaWNNRApTECUzEvKAKAZriq/xn9j8Tg82NZrPRcGd4Ktb+zbhGuo1d1yqjShI2z2zlci29Vh2eNXUTaXpr2yeFR5gCVTC+JcWoiR+KWw/iVEMpBA95GTea9LLRabLoUAHOcYmnj2mfUsfJpEalx4HdbfRxyJbI7p2vHWn+SYcHylY/iif2MCdl59MRkWYEqmJcUDPAgm5szVuqdMf1Cq5995w/J/jf5fp6HxX5Y/j+3rPDbQ0VWnRCqFXA1Tgx7ncvRdRqHReKVtWipTogeKnVLfGJKcgiqzWuABk7RbS0DXl1WY4SiCvjaoo+IepR9sl0mtmqU2JXDL1hjG8eKfjZHLX5UAej9E5d/RZ6Tx1P8AKzynlbx+NBudRxSjI8A4GJajiAPALnBLEvd0KgGRTYlz3bHHzOP5eP8AziXc8HMzltD0m84ctVBnIA8LEZnn/j9vTRbQPZdGKdOozoWGX17sT7ekLbsddV6XOMU+oMeWZCycA11wNKxRyz5UNjDkas9/p2ScW1GkJrudpUeDhUZHYt1GHWO/KGOu7bRyT+LE8MpFaYB5nJM9dxKfHDV4fn3+ee2vpamtiOIAoBwiWHgCgQ30WuAlVlY4109I82yCPznN8pim+DcfTq+IzVx59TPfp6JaP1R6TztenrJcLxyCNIJA3KqSC22w+8jZOoZxS8c0lLUGBwNSqwOIrSlWELIncYIHZmQgSao4LDJAHaT2S3FXdohRmtqkzLDVTkk+ZO09pWNRp8/tO5mUJJEswBozQxIpGxAHAjDtRcqwYc1IYSFqxaJifsVvNbRaPp6dw+uHpo45MoYe88hkxzjvNZ+nvcOSMtK3j7QvrtqYOhC7dgBAHuZVv3porXbN8TvbsDJVMZGcOCD3Yimv9tXwpr072F2zKCw0nG4JG0r+2a0aceMXGmk/e3UHvznV8bi+eaJ/pxvL54px5j7n0ypnp3jygDQMoBCJI4EClZs7KrWbRRpvUbuRS39pG160jdp0lWlrzqsba/hX7PLh8NcMlBfDtUf42+ZiyeQpHqvttxeNy293nTUXHB/3ZEWnqNNUChjzzjtnCzzN7zaft6fiRGPHXHH0HVFzMcxLfWVG4s6W53z5xJ/KVTSOwR1qrtYRvOiBr0qbGqadQgkBlynoe4ztcLL/AAxMTDz3kcE8i0TFumS4x0cubbP1KZKj+pTyyf4952MfIx5OpcHJxsuL/KAjE0KDQMoAf4N0NvLnDLT+mh5VK2UBHkOZ+0yZOXix+pnctmLh5snUaj9tvwn9nVtTw1wzV28IylP7Df5nPyeQvb1X06OLxmOvu87a+zs6dJQlJEpqP+KKFEw2ta07mXQpStI1WNO5WRTIoCMEAg8wYGB8T4DnLUcA+Anb2MrtjiV9M0x2yqcOr1HKBQNtW9RDt37HMhGG21s56xGxWy4MKZDP1m7NuqJqphrX2y5M029QJXdTCIoO+STLY72pPTqk5R9xjY9xh+ymAjiHRK1udwv0nPN6QA3815GacfKvT9ww5eDjv7j1LJcV6DXdHLUwK6DtpZ1j1Xn9szbj5uO3qfTm5eBmp7j3H/fTMshBIIIIOCDsQZsj30xT67fQqzyr2KYEAkBAHxAyiAN0n4itGnTQnH1qn0Mg4x1Sfyx7wnpKsblh72maNQ1EJVkOoEEgr6Src7WtNwni371bUrgjTqU6h+IEqce4mynTLaNSv2Nrq6x5xzYO5tgrDuO3vFsLNOiBIzITKbw2Wgm84Ja3DfVq0KLMRpLMDk49JbXLesaiVN+PivO7V3IynaJnaXSI0hAHiBiIAI6QWyuqtUAK0yXA727PSSjqRG2Jv0b69FHGQdWdiOqoHP5+JVXXyja23TT8BtAEVOwM7Y9ST/cmaremceVNPLlIdmaumRt6wgJUmyISHQjaIB1tV6vuZZJLZOGHntKo6SWBEZ4geAKAA+kdc4SivN2+IW6SpHvbGcbepUuBboSqaRqbxCV/a1rejxzTyDurYmne4Z7djokQgdvSPskGGk5HI84+ydlORImBq+MjzMuApcKSNuYORKahaWRSSiB4BFjGGav31XDN/wBaH/fvI27WV6CRSXIcc9AUEE8ojFOiCsorI/Mt9QD15yVULtGJNWR7jAOOrGx5HkZIkgcQAMV3P/oy0DFvUDjPcSJnmNJLIiM8QKMObGMmYvXCq5OzVH2H4ZVPa6OgynU+22xBhsDHBDiuPOmQdj6/lJwhZoGk4VuZMkTlUGYwek/YfaEkEXNXS7D8RlkdGuWVX+cjx5H2ErmDEqLnG+JCYN1BkTMWjJWvGOhtJwcYB7owBVrB9RZqqkhNIVqY0nzP+JR0s7Bbi304AqVGIO+dG/2EWve9pDHCW/i0+7JHwZbVG3TTASSpFlElslSq/YDiTglQXTA8x8yXxALfuz1HIOnfG3I7RwlC7ZXRp3j25AKsmsHwkEj9JXb3CWvTSSrZEWjCOqBK93UOABjc4h9JQo1aLimQGGW31HP+9srWBFXhzntTz5xaPa5w+ydXQ5TAZTgZk4QmWjWSVotGFKvRbOxX5lkSWlU2T96/cx/IacqfDH3yU3OeZ/SHyGn/2Q==">
+                            <span class="d-none d-lg-inline small text-white">Ngoc Chi Le</span>                       
+                        </div>
+                        <hr class="sidebar-divider">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('index')}}">
+                                    <i class="fas fa-fw fa-tachometer-alt mr-2"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                    {% block body %}{% endblock %}
+
+                    <footer class="sticky-footer">
+                        <div class="container my-auto">
+                          <div class="copyright text-center my-auto">
+                            <span class="text-gray-600">Copyright &copy; Hanoi University of Science and Technology 2020</span>
+                          </div>
+                        </div>
+                    </footer>
+                </main>
+            </div>
+        </div>
+           
+    </body>
+</html>

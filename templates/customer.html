@@ -1,0 +1,124 @@
+{% extends  "dashboard.html" %}
+
+{% block javascript %}
+    <script type=text/javascript> 
+        var churn_pct = {{ data.churn_pct|tojson }};
+        var totalDayCharge = {{ data.total_day_charge|tojson }};
+        var totalEveCharge = {{ data.total_eve_charge|tojson }};
+        var totalNightCharge = {{ data.total_night_charge|tojson }};
+        var totalInternationalCharge = {{ data.total_intl_charge|tojson }};
+
+        var totalDayCall = {{ data.total_day_calls|tojson }};
+        var totalEveCall = {{ data.total_eve_calls|tojson }};
+        var totalNightCall = {{ data.total_night_calls|tojson }};
+        var totalInternationalCall = {{ data.total_intl_calls|tojson }};
+
+        var contrib = {{contrib|tojson}}
+    </script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/customer_chart.js')}}"></script>  
+
+{% endblock %}
+
+{% block body %}
+    <div class="border-bottom pt-3">
+        <h3>Detailed Information</h3>
+    </div>
+
+    <div class="container-fluid py-3">
+        <div class="row justify-content-between">
+            <div class="col-xl-3 col-md-6 mb-4">
+                {% if data.status == 'TRUE' %}
+                    <div class="card border-left-danger shadow">
+                        <div class="card-body">
+                            <div class="font-weight-bold mb-1 text-xs text-uppercase text-prime">Status</div>
+                            <div class="h5 font-weight-bold text-danger">Potential churner</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card border-left-primary shadow">
+                        <div class="card-body">
+                            <div class="font-weight-bold mb-1 text-xs text-uppercase text-prime">Status</div>
+                            <div class="h5 font-weight-bold text-gray">No risk of churn</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-xl-5 col-lg-6 pb-3">
+                <div class="card shadow">
+                    <h5 class="card-header text-prime">Churn Probability</h5>
+                    <div class="card-body">
+                        <div class="pie-chart-container py-3">
+                            <canvas id="churn-prob"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-md-12 col-sm-12">
+                <div class="card shadow mb-3">
+                    <h5 class="card-header card-header-primary text-white">Customer ID: {{ data.id }}</h5>
+                    <div class="card-body">
+                        <div class="row border-top py-2">
+                            <div class="col-xl-5 font-weight-bold">Phone Number</div>
+                            <div class="col-xl-3">{{ data.phone_number }}</div>
+                        </div>
+                        <div class="row border-top py-2">
+                            <div class="col-xl-5 font-weight-bold">State</div>
+                            <div class="col-xl-3">{{ data.state_name }}</div>
+                        </div>
+                        <div class="row border-top py-2">
+                            <div class="col-xl-5 font-weight-bold">International plan</div>
+                            <div class="col-xl-3">{{ data.international_plan }}</div>
+                        </div>
+                        <div class="row border-top py-2">
+                            <div class="col-xl-5 font-weight-bold">Voice mail plan</div>
+                            <div class="col-xl-3">{{ data.voice_mail_plan }}</div>
+                        </div>
+                        <div class="row border-top py-2">
+                            <div class="col-xl-5 font-weight-bold">Number of voice mail messages</div>
+                            <div class="col-xl-3">{{ data.number_vmail_messages }}</div>
+                        </div>
+                        <div class="row border-top border-bottom py-2">
+                            <div class="col-xl-5 font-weight-bold">Customer service calls</div>
+                            <div class="col-xl-3">{{ data.customer_service_calls }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-10">
+                <div class="card shadow mb-3">
+                    <h5 class="card-header text-prime">Total charge</h5>
+                    <div class="card-body">
+                        <div class="bar-container">
+                            <canvas id="charge-chart"></canvas>
+                        </div>
+                    </div>
+                </div>                  
+            </div>
+
+            {% if data.churn_pct >= 0.5 %}
+                <div class="col-xl-10">
+                    <div class="card shadow mb-3">
+                        <h5 class="card-header text-prime">Feature contribution</h5>
+                        <div class="card-body">
+                            <div class="bar-container">
+                                <canvas id="contrib-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>                  
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+
