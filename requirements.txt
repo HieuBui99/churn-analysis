@@ -75,7 +75,7 @@ tornado==6.0.4
 tqdm==4.45.0
 traitlets==4.3.3
 treeinterpreter==0.2.2
-urllib3==1.25.8
+urllib3==1.26.5
 wcwidth==0.1.9
 Werkzeug==0.16.0
 wrapt==1.12.1
